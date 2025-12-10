@@ -1,0 +1,18 @@
+# Render Blueprint Configuration
+# This file can be used to deploy via Render Blueprint (optional)
+# Or configure manually via Render dashboard
+
+services:
+  - type: web
+    name: court-booking-api
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGODB_URI
+        value: mongodb+srv://Prabha:Acornglobus@cluster0.wqtdjnk.mongodb.net/court-booking?retryWrites=true&w=majority
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+
