@@ -86,7 +86,7 @@ const BookingPage = ({ userId }) => {
     setMessage({ type: '', text: '' });
 
     try {
-      const res = await createBooking({
+      await createBooking({
         userId,
         courtId: selectedCourt,
         startTime: selectedSlot.startTime,
