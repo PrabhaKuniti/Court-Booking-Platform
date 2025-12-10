@@ -83,21 +83,13 @@ MONGODB_URI=mongodb://localhost:27017/court-booking
 NODE_ENV=development
 ```
 
-   **For MongoDB Atlas (Cloud)**: See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for setup instructions.
-   ```env
-   MONGODB_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/court-booking?retryWrites=true&w=majority
-   ```
+  
 
 4. Start MongoDB (if running locally):
 ```bash
 # On macOS/Linux
 mongod
 
-# On Windows, start MongoDB service or run:
-mongod.exe
-```
-
-   **Note**: If using MongoDB Atlas, skip this step and proceed to step 5.
 
 5. Seed the database with initial data:
 ```bash
@@ -212,7 +204,6 @@ After running the seed script, note the test user ID printed in the console. You
 
 ## Database Design & Pricing Engine
 
-See `DESIGN_DOCUMENT.md` for a detailed explanation of the database schema and pricing engine architecture.
 
 ## Testing
 
@@ -241,38 +232,4 @@ Content-Type: application/json
   "coachId": "COACH_ID"
 }
 ```
-
-## Deployment
-
-### Quick Deploy (10 minutes)
-See [QUICK_DEPLOY.md](./QUICK_DEPLOY.md) for a fast deployment guide.
-
-### Full Deployment Guide
-- **Backend to Render**: See [DEPLOY_RENDER_VERCEL.md](./DEPLOY_RENDER_VERCEL.md)
-- **Frontend to Vercel**: See [DEPLOY_RENDER_VERCEL.md](./DEPLOY_RENDER_VERCEL.md)
-- **Deployment Checklist**: See [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md)
-
-### Recommended Platforms
-- **Backend**: Render (free tier available)
-- **Frontend**: Vercel (free tier available)
-- **Database**: MongoDB Atlas (free tier available)
-
-## Future Enhancements
-
-- User authentication and authorization
-- Payment integration
-- Email/SMS notifications
-- Calendar view for bookings
-- Recurring bookings
-- Coach one-time unavailability management
-- Advanced analytics and reporting
-- Mobile app
-
-## License
-
-This project is created for demonstration purposes.
-
-## Contact
-
-For questions or issues, please refer to the codebase documentation or create an issue in the repository.
 
