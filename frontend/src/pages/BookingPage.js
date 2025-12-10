@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { format, addDays } from 'date-fns';
 import { getCourts, getEquipment, getCoaches, getAvailableSlots, calculatePrice, createBooking, addToWaitlist } from '../services/api';
 
@@ -17,23 +17,7 @@ const BookingPage = ({ userId }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  useEffect(() => {
-    if (selectedCourt && selectedDate) {
-      loadAvailableSlots();
-    }
-  }, [selectedCourt, selectedDate]);
-
-  useEffect(() => {
-    if (selectedSlot && selectedCourt) {
-      calculateBookingPrice();
-    }
-  }, [selectedSlot, selectedRackets, selectedShoes, selectedCoach, selectedCourt]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const [courtsRes, equipmentRes, coachesRes] = await Promise.all([
         getCourts(),
@@ -46,9 +30,13 @@ const BookingPage = ({ userId }) => {
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to load data' });
     }
-  };
+  }, []);
 
-  const loadAvailableSlots = async () => {
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const loadAvailableSlots = useCallback(async () => {
     try {
       const res = await getAvailableSlots(selectedCourt, selectedDate);
       setAvailableSlots(res.data);
@@ -56,13 +44,19 @@ const BookingPage = ({ userId }) => {
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to load available slots' });
     }
-  };
+  }, [selectedCourt, selectedDate]);
 
-  const calculateBookingPrice = async () => {
+  useEffect(() => {
+    if (selectedCourt && selectedDate) {
+      loadAvailableSlots();
+    }
+  }, [selectedCourt, selectedDate, loadAvailableSlots]);
+
+  const calculateBookingPrice = useCallback(async () => {
     if (!selectedSlot) return;
 
     try {
-      const res = await calculatePrice({
+      const priceRes = await calculatePrice({
         courtId: selectedCourt,
         startTime: selectedSlot.startTime,
         endTime: selectedSlot.endTime,
@@ -70,11 +64,17 @@ const BookingPage = ({ userId }) => {
         shoes: selectedShoes,
         coachId: selectedCoach || null,
       });
-      setPriceBreakdown(res.data);
+      setPriceBreakdown(priceRes.data);
     } catch (error) {
       console.error('Price calculation error:', error);
     }
-  };
+  }, [selectedCourt, selectedSlot, selectedRackets, selectedShoes, selectedCoach]);
+
+  useEffect(() => {
+    if (selectedSlot && selectedCourt) {
+      calculateBookingPrice();
+    }
+  }, [selectedSlot, selectedCourt, selectedRackets, selectedShoes, selectedCoach, calculateBookingPrice]);
 
   const handleBooking = async () => {
     if (!selectedSlot || !selectedCourt) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { format } from 'date-fns';
 import { getUserBookings, cancelBooking } from '../services/api';
 
@@ -7,11 +7,7 @@ const BookingHistory = ({ userId }) => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  useEffect(() => {
-    loadBookings();
-  }, [userId]);
-
-  const loadBookings = async () => {
+  const loadBookings = useCallback(async () => {
     try {
       const res = await getUserBookings(userId);
       setBookings(res.data);
@@ -20,7 +16,11 @@ const BookingHistory = ({ userId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    loadBookings();
+  }, [loadBookings]);
 
   const handleCancel = async (bookingId) => {
     if (!window.confirm('Are you sure you want to cancel this booking?')) {

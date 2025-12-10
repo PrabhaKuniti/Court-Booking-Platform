@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-  getAdminCourts, createCourt, updateCourt, deleteCourt,
-  getAdminEquipment, createEquipment, updateEquipment,
-  getAdminCoaches, createCoach, updateCoach,
-  getPricingRules, createPricingRule, updatePricingRule, togglePricingRule, deletePricingRule,
+  getAdminCourts, createCourt,
+  getAdminEquipment, createEquipment,
+  getAdminCoaches, createCoach,
+  getPricingRules, createPricingRule, togglePricingRule,
 } from '../services/api';
 
 const AdminDashboard = () => {
@@ -15,13 +15,8 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [showForm, setShowForm] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
 
-  useEffect(() => {
-    loadData();
-  }, [activeTab]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       switch (activeTab) {
@@ -41,13 +36,19 @@ const AdminDashboard = () => {
           const rulesRes = await getPricingRules();
           setPricingRules(rulesRes.data);
           break;
+        default:
+          break;
       }
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to load data' });
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab]);
+
+  useEffect(() => {
+    loadData();
+  }, [activeTab, loadData]);
 
   const handleCreateCourt = async (e) => {
     e.preventDefault();
@@ -185,7 +186,6 @@ const AdminDashboard = () => {
                 onClick={() => {
                   setActiveTab(tab);
                   setShowForm(false);
-                  setEditingItem(null);
                 }}
                 className={`px-6 py-3 font-medium capitalize ${
                   activeTab === tab
